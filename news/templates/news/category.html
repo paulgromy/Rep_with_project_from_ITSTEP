@@ -33,7 +33,7 @@
 
             <p class="card-text ">{{i.content|linebreaks|truncatewords:15}}</p>
 
-            <a href="#" class="btn btn-primary">Читать делее.....</a>
+            <a href="{{ i.get_absolute_url }}" class="btn btn-primary">Читать дaлее.....</a>
         </div>
         <div class="card-footer text-muted">
             {{i.created_at|date:"Y-m-d H:i"}}

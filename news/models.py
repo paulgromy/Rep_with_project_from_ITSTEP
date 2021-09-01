@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse_lazy
 
 
 # Класс для новостей. Описание полей.
@@ -11,6 +12,8 @@ class News(models.Model):
     is_published = models.BooleanField(default=True, verbose_name="Опубликовано")
     category = models.ForeignKey("Category", on_delete=models.PROTECT, null=True, verbose_name="Категория")
 
+    def get_absolute_url(self):
+        return reverse_lazy("view_news", kwargs = {"news_id": self.pk})
 
 
     # Для отображения строкового представления.
@@ -27,6 +30,11 @@ class News(models.Model):
 # Класс для определения новостей по категориям.
 class Category(models.Model):
     title = models.CharField(max_length=150, db_index=True, verbose_name="Наименование категории")
+
+    def get_absolute_url(self):
+        return reverse_lazy("Category", kwargs = {"id_category": self.pk})
+
+
 
     def __str__(self):
         return self.title

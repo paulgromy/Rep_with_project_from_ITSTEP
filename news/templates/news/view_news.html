@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{news_i.title}}
+{% endblock %}
+
+
+{% block sidebar %}
+    {% include "inc/_sidebar.html" %}
+{% endblock %}
+
+
+{% block content %}
+
+
+
+    <div class="card mb-3">
+
+        <div class="card-body">
+            <div class="media">
+                <div class="media-body">
+                    {% if news_i.photo %}
+                        <img src = "{{ news_i.photo.url }}" alt="" width="300" height="300">
+                    {% else %}
+
+                    {% endif %}
+                </div>
+            </div>
+
+            <h5 class="card-title">{{forloop.counter}} {%filter force_escape| upper%}{{news_i.title}}{%endfilter%}</h5>
+
+            <p class="card-text ">{{news_i.content|linebreaks}}</p>
+
+
+        </div>
+        <div class="card-footer text-muted">
+            {{news_i.created_at|date:"Y-m-d H:i"}}
+        </div>
+    </div>
+{% endblock %}
+

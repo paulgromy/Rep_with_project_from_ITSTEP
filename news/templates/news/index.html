@@ -15,7 +15,7 @@
     <div class="card mb-3">
         <div class="card-header">
 
-            Категория: <a href="{% url 'Category' i.category.pk %}" >{{i.category}}</a>
+            Категория: <a href="{{i.Category.get_absolute_url}}" >{{i.category}}</a>
 
         </div>
         <div class="card-body">

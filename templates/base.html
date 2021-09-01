@@ -21,9 +21,12 @@
 {% include "inc/_nav.html" %}
 
 <div class = "container mt-3">
-    {%now "Y-m-d H:i"%}
+    {% load tz %}
+    {% timezone "Europe/Moscow" %}
+        {%now "Y-m-d H:i"%}
+    {% endtimezone %}
     <h1> {{title}}</h1>
-    <h2>Всего новостей на странице: {{news|length}}</h2>
+<!--    <h2>Всего новостей на странице: {{news|length}}</h2>-->
 
     <div class = "row">
         <div class="col-md-3">

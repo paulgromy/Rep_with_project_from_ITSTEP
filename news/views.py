@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from news.models import News, Category
 from django.views.generic import ListView
 
@@ -16,14 +16,8 @@ class HomeNews(ListView):
         context["title"] = "Главная страница"
         return context
 
-# То же самое в виде функции...
-# def index(request):
-#     news = News.objects.all()
-#     return render(request, "news/index.html", {"news": news,
-#                                                "title": "Список новостей"})
 
-
-# Вьюха в виде класса для вывода новостей по категориям.
+# Вьюха  для вывода новостей по категориям.
 class GiveCategories(ListView):
     model = News
     template_name = "news/home_news_list.html"
@@ -37,9 +31,30 @@ class GiveCategories(ListView):
     def get_queryset(self):
         return News.objects.filter(category_id=self.kwargs["id_category"])
 
-# Тоже самое ввиде функции
-# def give_categories(request, id_category):
-#     news = News.objects.filter(category_id=id_category)
-#     category = Category.objects.get(pk=id_category)
-#     return render(request, "news/category.html", {"news": news,
-#                                                   "category": category})
+
+# Вьюха для чтения конкретной новости.
+class ViewNews(ListView):
+    model = News
+    template_name = "news/view_news.html"
+    context_object_name = "news"
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ViewNews, self).get_context_data(**kwargs)
+        context["news_i"] = get_object_or_404(News, pk = self.kwargs["news_id"])
+        return context
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
