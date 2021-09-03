@@ -15,7 +15,6 @@ class News(models.Model):
     def get_absolute_url(self):
         return reverse_lazy("view_news", kwargs = {"news_id": self.pk})
 
-
     # Для отображения строкового представления.
     def __str__(self):
         return self.title
@@ -33,8 +32,6 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         return reverse_lazy("Category", kwargs = {"id_category": self.pk})
-
-
 
     def __str__(self):
         return self.title
