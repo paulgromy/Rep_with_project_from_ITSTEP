@@ -38,7 +38,11 @@
             <a href="{{ i.get_absolute_url }}" class="btn btn-primary">Читать дaлее.....</a>
         </div>
         <div class="card-footer text-muted">
-            Дата выхода новости: {{i.created_at|date:"Y-m-d H:i"}}
+            {% load tz %}
+            {% timezone "Europe/Moscow" %}
+                Дата выхода новости: {{i.created_at|date:"Y-m-d H:i"}}
+            {% endtimezone %}
+
             <p>C момента выхода новости прошло {{i.created_at|timesince}}</p>
         </div>
     </div>

@@ -1,3 +1,5 @@
+<!--Основоной шаблон, который формирует главную страницу и на базе которого строются остальные шаблоны.-->
+
 {% extends "base.html" %}
 
 {% block title %}Актуальные новости::{{title}}{% endblock %}
@@ -9,14 +11,10 @@
 
 
 {% block content %}
-
     {% for i in news %}
-
     <div class="card mb-3">
         <div class="card-header">
-
             Категория: <a href="{{i.Category.get_absolute_url}}" >{{i.category}}</a>
-
         </div>
         <div class="card-body">
             <div class="media">
@@ -28,11 +26,8 @@
                     {% endif %}
                 </div>
             </div>
-
             <h5 class="card-title">{{forloop.counter}}. {%filter force_escape| upper%}{{i.title}}{%endfilter%}</h5>
-
             <p class="card-text ">{{i.content|linebreaks|truncatewords:15}}</p>
-
             <a href="#" class="btn btn-primary">Читать делее.....</a>
         </div>
         <div class="card-footer text-muted">
