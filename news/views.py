@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from news.models import News, Category
-from django.views.generic import ListView
+from django.views.generic import ListView, FormView
 from .forms import NewsForm
 
 
@@ -50,12 +50,49 @@ class ViewNews(ListView):
 
 #  Этот класс для формы, которая позволяет добавить новость в интерактивном режиме.
 # Работа данной вьюхи отражена в forms.py
-def add_news(request):
-    if request.method == "POST":
-        form = NewsForm(request.POST)
+class Add_News(FormView):
+    template_name = "news/add_news.html"
+    form_class = NewsForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
         if form.is_valid():
             news = News.objects.create(**form.cleaned_data)
             return redirect(news)
-    else:
-        form = NewsForm()
-    return render(request, "news/add_news.html", {"form": form})
+        else:
+            form = NewsForm()
+        return render(request, self.template_name, {'form': form})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
