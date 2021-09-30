@@ -15,7 +15,7 @@ class News(models.Model):
 
     # Формирует уникальный адрес для каждого экземпляра модели.
     def get_absolute_url(self):
-        return reverse_lazy("view_news", kwargs={"news_id": self.pk})
+        return reverse_lazy("view_news", kwargs={"pk": self.pk})
 
     # Метод для отображения строкового представления.
     def __str__(self):

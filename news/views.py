@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
+
 from news.models import News, Category
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, FormView, DetailView, CreateView
 from .forms import NewsForm
 
 
@@ -37,15 +39,10 @@ class GiveCategories(ListView):
 
 # Вьюха для чтения конкретной новости. Пользователь, нажимаю на кнопку "Читать далее",
 # сможет ознакомиться с новостью полностью.
-class ViewNews(ListView):
+class ViewNews(DetailView):
     model = News
     template_name = "news/view_news.html"
-    context_object_name = "news"
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(ViewNews, self).get_context_data(**kwargs)
-        context["news_i"] = get_object_or_404(News, pk=self.kwargs["news_id"])
-        return context
+    context_object_name = "news_i"
 
 
 #  Этот класс для формы, которая позволяет добавить новость в интерактивном режиме.
@@ -61,15 +58,11 @@ class Add_News(FormView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            news = News.objects.create(**form.cleaned_data)
-            return redirect(news)
+            News.objects.create(**form.cleaned_data)
+            return redirect("Main")
         else:
             form = NewsForm()
         return render(request, self.template_name, {'form': form})
-
-
-
-
 
 
 
