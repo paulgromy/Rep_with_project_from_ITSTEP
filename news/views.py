@@ -10,6 +10,7 @@ from .forms import NewsForm
 # От самой свежей, до последней. Вне зависимости от её категории. Новость будет выводиться в формате:
 # заголовок и первые несколько слов контента.
 class HomeNews(ListView):
+    paginate_by = 3
     model = News
     template_name = "news/home_news_list.html"
     context_object_name = "news"
@@ -19,6 +20,9 @@ class HomeNews(ListView):
         context = super(HomeNews, self).get_context_data(**kwargs)
         context["title"] = "Главная страница"
         return context
+
+    def get_queryset(self):
+        return News.objects.filter(is_published=True).select_related('category')
 
 
 # Вьюха  для вывода новостей по категориям. Пользователь на главной странице, сможет выбрать из меню
@@ -34,7 +38,7 @@ class GiveCategories(ListView):
         return context
 
     def get_queryset(self):
-        return News.objects.filter(category_id=self.kwargs["id_category"])
+        return News.objects.filter(category_id=self.kwargs["id_category"]).select_related('category')
 
 
 # Вьюха для чтения конкретной новости. Пользователь, нажимаю на кнопку "Читать далее",

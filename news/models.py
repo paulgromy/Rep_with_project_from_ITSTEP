@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse_lazy
-
+from datetime import date
 
 # Класс для публикации новостей. Описание полей.
 # Основная модель, которая формирует формат и наполнение новости.
@@ -12,7 +12,7 @@ class News(models.Model):
     photo = models.ImageField(upload_to="photos/%Y/%m/%d/", max_length=150, verbose_name="Фото", blank=True)
     is_published = models.BooleanField(default=True, verbose_name="Опубликовано")
     category = models.ForeignKey("Category", on_delete=models.PROTECT, null=True, verbose_name="Категория")
-
+    views = models.IntegerField(default=0)
     # Формирует уникальный адрес для каждого экземпляра модели.
     def get_absolute_url(self):
         return reverse_lazy("view_news", kwargs={"pk": self.pk})
