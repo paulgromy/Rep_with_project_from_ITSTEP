@@ -28,6 +28,7 @@ class HomeNews(ListView):
 # Вьюха  для вывода новостей по категориям. Пользователь на главной странице, сможет выбрать из меню
 # интерисующую категорию новостей.
 class GiveCategories(ListView):
+    paginate_by = 3
     model = News
     template_name = "news/home_news_list.html"
     context_object_name = "news"
