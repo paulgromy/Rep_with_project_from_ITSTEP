@@ -9,9 +9,23 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="/">Главная</a>
+
+
+        {% if request.user.is_authenticated %}
         <li class="nav-item"><a class="nav-link" href="{% url 'add_news'%}">Добавить новость</a>
+        <li class="last"> Вы зашли как, {{user.username}} | <a href="{% url 'logout' %}" >Выйти</a>
+                                                          | <a href="{% url 'password_change' %}" >Изменить пароль</a></li>
+
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}"><strong>Личный кабинет</strong></a>
+        <li class="nav-item"><a class="nav-link"><strong>|</strong></a>
+        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}"><strong>Регистрация</strong></a>
+
+        {% endif %}
+      </li>
       </ul>
     </div>
+
 
 
   </div>

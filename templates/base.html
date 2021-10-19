@@ -43,17 +43,25 @@
                 <li class="page-item">
                 <span class="step-links">
                     {% if page_obj.has_previous %}
+                        <button type="button" class="btn btn-warning">
                         <a href="?page=1"> first</a>
-                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                        </button>
+                        <button type="button" class="btn btn-warning">
+                            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                        </button>
                     {% endif %}
 
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" class="btn btn-warning">
                         <span class="current">{{ page_obj.number }}</span>
                     </button>
 
                     {% if page_obj.has_next %}
+                    <button type="button" class="btn btn-warning">
                         <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    </button>
+                    <button type="button" class="btn btn-warning">
                         <a href="?page={{ page_obj.paginator.num_pages }}">last</a>
+                    </button>
                     {% endif %}
                 </span>
             </ul>

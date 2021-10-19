@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+
+{% block sidebar %}
+    {% include "inc/_sidebar.html" %}
+{% endblock %}
+
+
+{% block content %}
+<form method="post">
+    <h1>Авторизация</h1><br>
+
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Войти</button>
+</form>
+<br>
+<a class="nav-item" href="{% url 'password_reset' %}">Забыли пароль</a>
+{% endblock %}
+
+
