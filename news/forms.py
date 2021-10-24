@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
+from django.forms import Textarea
 
-from .models import Category, News
+from .models import Category, News, CommentNews
 import re
 from django.core.exceptions import ValidationError
 
@@ -63,9 +64,22 @@ class LoginUserForm(AuthenticationForm):
 class MyPasswordChangeForm(PasswordChangeForm):
     old_password = forms.CharField(label="Прежний пароль", widget=forms.PasswordInput(attrs={"class": "form-control"}))
     new_password1 = forms.CharField(label="Новый пароль", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    new_password2 = forms.CharField(label="Повторите новый пароль", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password2 = forms.CharField(label="Повторите новый пароль",
+                                    widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
     error_messages = {
         'password_mismatch': 'Два поля пароля не совпадают.',
         'password_incorrect': "Старый пароль введён некоректно.",
     }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = CommentNews
+        fields = ("comment",)
+
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+        self.fields['comment'].widget = Textarea(attrs={'rows':4})

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from .models import News, Category
+from .models import News, Category, CommentNews
 
 
 # Создаю класс для настройки админки.
@@ -28,6 +28,12 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "title")
     list_display_links = ("id", "title")
     search_fields = ("title",)
+
+
+@admin.register(CommentNews)
+class CommentNewsAdmin(admin.ModelAdmin):
+    list_display = ("id", "user")
+    list_display_links = ("id", "user")
 
 
 admin.site.site_title = "Управление"

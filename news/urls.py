@@ -2,8 +2,6 @@ from django.urls import path
 
 from . import views
 from .views import *
-from django.contrib.auth import views as auth_views
-
 
 
 urlpatterns = [
@@ -13,11 +11,21 @@ urlpatterns = [
     path("news/add-news/", Add_News.as_view(), name="add_news"),
     path("news/register/", RegisterUser.as_view(), name="register"),
     path("news/login/", LoginUser.as_view(), name="login"),
-    path("news/logout/", logout_user, name="logout"),
+    path("news/logout/", LogoutUserView.as_view(), name="logout"),
     path('news/password_change/', views.MyPasswordChangeView.as_view(), name='password_change'),
-    # path('password-change/done/', views.PasswordChangeView.as_view(), name='password_change_done'),
-    path('news/password-reset/', views.PasswordResetView.as_view(), name='password_reset'),
-    path('news/password-reset/done/', views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    path('news/reset/<uidb64>/<token>/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('news/reset/done/', views.PasswordResetCompleteView.as_view(template_name='news/password_reset_complete.html'), name='password_reset_complete'),
+    path('news/password-reset/', views.PasswordResetView.as_view(template_name='news/password_reset.html'),
+         name='password_reset'),
+    path('news/password-reset/done/', views.PasswordResetDoneView.as_view(template_name='news/password_reset_done.html'),
+         name='password_reset_done'),
+    path('news/reset/<uidb64>/<token>/', views.PasswordResetConfirmView.as_view(template_name='news/password_reset_confirm.html'),
+         name='password_reset_confirm'),
+    path('news/reset/done/', views.PasswordResetCompleteView.as_view(template_name='news/password_reset_complete.html'),
+         name='password_reset_complete'),
+
 ]
+
+
+
+
+
+

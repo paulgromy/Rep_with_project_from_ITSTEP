@@ -1,32 +1,21 @@
-from django.contrib.auth import logout, login, update_session_auth_hash
+from django.contrib.auth import logout, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordChangeDoneView, PasswordResetView, \
     PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from django.core.mail import send_mail
-from django.db.models import Q
-from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
+from django.views.generic.edit import FormMixin
+from news.models import News, Category, CommentNews
+from django.views.generic import ListView, FormView, DetailView, CreateView, RedirectView
+from .forms import NewsForm, RegisterUserForm, LoginUserForm, MyPasswordChangeForm, CommentForm
+from .utils import DataMixin
 
-from news.models import News, Category
-from django.views.generic import ListView, FormView, DetailView, CreateView
-from .forms import NewsForm, RegisterUserForm, LoginUserForm, MyPasswordChangeForm
 
 # Создаю представлениe в виде класса, которое будет генерировать, имеющиеся в наличии новости.
 # От самой свежей, до последней. Вне зависимости от её категории. Новость будет выводиться в формате:
 # заголовок и первые несколько слов контента.
-from .utils import DataMixin
-
-
-class HomeNews(ListView):
-    paginate_by = 3
+class HomeNews(DataMixin, ListView):
     model = News
     template_name = "news/home_news_list.html"
     context_object_name = "news"
@@ -43,8 +32,7 @@ class HomeNews(ListView):
 
 # Вьюха  для вывода новостей по категориям. Пользователь на главной странице, сможет выбрать из меню
 # интерисующую категорию новостей.
-class GiveCategories(ListView):
-    paginate_by = 3
+class GiveCategories(DataMixin, ListView):
     model = News
     template_name = "news/home_news_list.html"
     context_object_name = "news"
@@ -60,21 +48,35 @@ class GiveCategories(ListView):
 
 # Вьюха для чтения конкретной новости. Пользователь, нажимаю на кнопку "Читать далее",
 # сможет ознакомиться с новостью полностью.
-class ViewNews(DetailView):
+class ViewNews(FormMixin, DetailView):
     model = News
     template_name = "news/view_news.html"
-    context_object_name = "news_i"
+    context_object_name = "news"
+    form_class = CommentForm
+
+    def get_success_url(self):
+        return reverse_lazy('view_news', kwargs={'pk': self.get_object().id})
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.news = self.get_object()
+        self.object.user = self.request.user
+        self.object.save()
+        return super().form_valid(form)
 
 
 #  Этот класс для формы, которая позволяет добавить новость в интерактивном режиме.
 # Работа данной вьюхи отражена в forms.py
-class Add_News(FormView):
+class Add_News(LoginRequiredMixin, FormView):
     template_name = "news/add_news.html"
     form_class = NewsForm
-
-    def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
@@ -105,44 +107,14 @@ class LoginUser(DataMixin, LoginView):
 
 
 # Выход пользователя из личного кабинета
-@login_required
-def logout_user(request):
-    logout(request)
-    return redirect('login')
+class LogoutUserView(LoginRequiredMixin, RedirectView):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('login')
 
 
 # Класс для самостоятельного изменения пароля пользователем. Будучи авторизованным.
 # Использую class DataMixin из utils.py, что бы убрать дублируемый код.
-class MyPasswordChangeView(DataMixin, PasswordChangeView):
+class MyPasswordChangeView(LoginRequiredMixin, DataMixin, PasswordChangeView):
     form_class = MyPasswordChangeForm
     template_name = 'news/password_change.html'
-
-
-# def password_reset_request(request):
-#     if request.method == "POST":
-#         password_reset_form = PasswordResetForm(request.POST)
-#         if password_reset_form.is_valid():
-#             data = password_reset_form.cleaned_data['email']
-#             associated_users = User.objects.filter(Q(email=data))
-#             if associated_users.exists():
-#                 for user in associated_users:
-#                     subject = "Password Reset Requested"
-#                     email_template_name = "main/password/password_reset_email.txt"
-#                     c = {
-#                         "email": user.email,
-#                         'domain': '127.0.0.1:8000',
-#                         'site_name': 'Website',
-#                         "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-#                         "user": user,
-#                         'token': default_token_generator.make_token(user),
-#                         'protocol': 'http',
-#                     }
-#                     email = render_to_string(email_template_name, c)
-#                     try:
-#                         send_mail(subject, email, 'admin@example.com', [user.email], fail_silently=False)
-#                     except BadHeaderError:
-#                         return HttpResponse('Invalid header found.')
-#                     return redirect("/password_reset/done/")
-#     password_reset_form = PasswordResetForm()
-#     return render(request=request, template_name="news/password_reset.html",
-#                   context={"password_reset_form": password_reset_form})
